@@ -3,7 +3,7 @@ import abi from "../../../assets/abi.json";
 // require("dotenv").config();
 // import * as fs from 'fs';
 
-const apiKey = "iiDYJ0CAxQyqnDZqbtu7SvaX_hNzz6V5"; //process.env.API_KEY;
+const apiKey = ""; //process.env.API_KEY;
 
 function cleanEvents(events) {
     const seenTransactionHashes = new Set();
