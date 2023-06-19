@@ -9,8 +9,6 @@ function cleanEvents(events) {
     const seenTransactionHashes = new Set();
     const tempEvents = [];
 
-
-
     //Clean event Data such that there are no duplicate transactions
     for (const event of events) {
         const transactionHash = event.transactionHash;
