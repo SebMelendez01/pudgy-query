@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { getData } from './api';
 
 
+
 interface TransferData {
   [key: string]: number;
 }
@@ -39,8 +40,8 @@ export default function Home() {
       if (start < end) {
         try{
           const ret = await getData(start, end);
+          //get the key values
           const keyValueArray = Object.entries(ret.transfers).map(([key, value]) => ({ [key]: value } as TransferData));
-          //sort key value array
           setTransfers(keyValueArray);
           setError('');
         } catch (err: any) {
@@ -97,20 +98,16 @@ export default function Home() {
                     </tr>
                   </thead>
                   <tbody className="align-baseline">
-                    {/* <div className='overflow-y-auto h-60'> */}
                     {transfers.map((transfer, index) => {
                       const address = Object.keys(transfer)[0];
                       const value = transfer[address];
                       return (
                           <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600' key={index}>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{address}</td>
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"><a target="_blank" rel="noopener noreferrer" href={`https://etherscan.io/address/${address}`}>{address}</a></td>
                             <td scope="row" className="px-6 py-4">{value}</td>
                           </tr>
                       );
-                      })}
-
-                    {/* </div> */}
-                    
+                      })}                    
                   </tbody>
                 </table>
               </div>

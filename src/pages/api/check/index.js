@@ -19,6 +19,7 @@ function cleanEvents(events) {
         }
     }
 
+    //Sum up each entry
     const cleanedMap = new Map();
     for (const event of tempEvents) {
         const from = event.args[0];
@@ -37,7 +38,7 @@ function cleanEvents(events) {
     });
 
     const sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
-
+    //Sort the object
     const sortedObject = {};
     for (const key of sortedKeys) {
         sortedObject[key] = obj[key];
@@ -59,17 +60,21 @@ export async function getData(startBlock, endBlock) {//
         provider
     );    
     const filter = contract.filters.Transfer(null, null);
-    let events = await contract.queryFilter(filter, startBlock, endBlock);
-    const fromAddressCounts = cleanEvents(events);
-    
-    let obj = {
-        "transfers" : fromAddressCounts,
-        "startBlock" : startBlock,
-        "endBlock" : endBlock,
-        "success" : true
-    };
+    try {
+        let events = await contract.queryFilter(filter, startBlock, endBlock);
+        const fromAddressCounts = cleanEvents(events);
+        let obj = {
+            "transfers" : fromAddressCounts,
+            "startBlock" : startBlock,
+            "endBlock" : endBlock,
+            "success" : true
+        };
 
-    return obj;
+        return obj;
+    } catch (err) {
+        return {"success" : false};
+    }
+    
 }
 
 export default async (req, res) => {
