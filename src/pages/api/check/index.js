@@ -23,6 +23,7 @@ function cleanEvents(events) {
     const cleanedMap = new Map();
     for (const event of tempEvents) {
         const from = event.args[0];
+        const id = event.args[2];
         if(!cleanedMap.has(from)) {
             cleanedMap.set(from, 1); 
         } else {
@@ -43,7 +44,6 @@ function cleanEvents(events) {
     for (const key of sortedKeys) {
         sortedObject[key] = obj[key];
     }
-
     return sortedObject;
 
 }
@@ -59,10 +59,22 @@ export async function getData(startBlock, endBlock) {//
         abi,
         provider
     );    
+
     const filter = contract.filters.Transfer(null, null);
+    // let allEvents = [];
+    
+    // for(let i = startBlock; i < endBlock; i += 5000) {
+    //     const _startBlock = i;
+    //     console.log(_startBlock);
+    //     const _endBlock = Math.min(endBlock, i + 4999);
+    //     const events = await contract.queryFilter(filter, _startBlock, _endBlock);
+    //     allEvents = [...allEvents, ...events]
+    // }
     try {
         let events = await contract.queryFilter(filter, startBlock, endBlock);
+        // console.log(events);
         const fromAddressCounts = cleanEvents(events);
+
         let obj = {
             "transfers" : fromAddressCounts,
             "startBlock" : startBlock,
@@ -72,8 +84,12 @@ export async function getData(startBlock, endBlock) {//
 
         return obj;
     } catch (err) {
-        return {"success" : false};
+        return {
+            "success" : false,
+            "message": "Failed to retrieve data from blockchain"
+            };
     }
+
     
 }
 
@@ -82,6 +98,6 @@ export default async (req, res) => {
     if(data.success) {
         res.status(200).json(data);
     } else {
-        res.status(500);
+        res.status(500).json(data);
     }
 }
