@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 export async function getData(startBlock: number, endBlock: number): Promise<any> {
-    return fetch(`https://pudgy-pen-test.vercel.app/check?startBlock=${startBlock}&endBlock=${endBlock}`)
+    return fetch(`http://localhost:3000/check?startBlock=${startBlock}&endBlock=${endBlock}`)//https://pudgy-pen-test.vercel.app/
         .then((response) => {
             if (response.ok) {
                 return response.json();

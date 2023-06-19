@@ -63,8 +63,8 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between"  >
-      <div className='place-content-start w-screen h-screen relative z-0"'>
-      <img src="https://www.coindesk.com/resizer/BQ9LHb_3SB7I6mkXBxLvyOD-HH4=/1056x603/filters:quality(80):format(webp)/cloudfront-us-east-1.images.arcpublishing.com/coindesk/3PS6KYIK5NCMRHIMMLWPOG4J2U.png" width="100%" height="100%"/>
+      <div className=' w-full h-screen relative z-0"'>
+        <img className="object-cover w-full h-full" src="https://www.coindesk.com/resizer/BQ9LHb_3SB7I6mkXBxLvyOD-HH4=/1056x603/filters:quality(80):format(webp)/cloudfront-us-east-1.images.arcpublishing.com/coindesk/3PS6KYIK5NCMRHIMMLWPOG4J2U.png" />
       </div>
       <div className='absolute z-10'>
         <div className=' flex flex-col items-center justify-between py-20'>
