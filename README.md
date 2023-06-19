@@ -1,3 +1,7 @@
+## Task
+Make a Next.js app hosted on Vercel. The app should have a simple frontend with two input fields and one button to submit an API request. The API endpoint should use the Ethers.js library to detect all transfer events within a given block range (the two fields on the frontend should be used to supply these values) from the Pudgy Penguins smart contract and return a json object containing each address that made the transfer of the penguin and how many transfers they made. Display the returned data in a two column table format on the screen.
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
