@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import abi from "../../../assets/abi.json";
-// require("dotenv").config();
+require("dotenv").config();
 // import * as fs from 'fs';
 
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 function cleanEvents(events) {
     const seenTransactionHashes = new Set();
@@ -21,7 +21,6 @@ function cleanEvents(events) {
         }
     }
 
- 
     const cleanedMap = new Map();
     for (const event of tempEvents) {
         const from = event.args[0];

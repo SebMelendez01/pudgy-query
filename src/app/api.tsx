@@ -1,5 +1,9 @@
+require("dotenv").config();
+
 export async function getData(startBlock: number, endBlock: number): Promise<any> {
-    return fetch(`http://localhost:3000/api/check?startBlock=${startBlock}&endBlock=${endBlock}`)
+    const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
+    console.log(endpoint);
+    return fetch(`${endpoint}/api/check?startBlock=${startBlock}&endBlock=${endBlock}`)
         .then((response) => {
             if (response.ok) {
                 return response.json();
