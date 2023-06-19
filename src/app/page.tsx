@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react';
 import { getData } from './api';
-import Image from "next/image";
 
 
 interface TransferData {
