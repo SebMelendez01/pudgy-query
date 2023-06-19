@@ -1,112 +1,123 @@
-import Image from 'next/image'
+'use client'
+import { useState } from 'react';
+import { getData } from './api';
+import Image from "next/image";
+
+
+interface TransferData {
+  [key: string]: number;
+}
 
 export default function Home() {
+
+  const [startBlock, setStartBlock] = useState('')
+  const [endBlock, setEndBlock] = useState('')
+  const [error, setError] = useState('')
+  const [transfers, setTransfers] = useState<TransferData[]>([]);
+
+  function sortTransferData(transferData: TransferData[]): TransferData[] {
+    return transferData.sort((a, b) => b["number"] - a["number"]);
+  }
+
+  const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartBlock(e.target.value);
+  };
+
+  const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEndBlock(e.target.value);
+  };
+
+  const handleButtonClick = async () => {
+    const numberRegex = /^\d+$/;
+
+    if (startBlock == '' || endBlock == '') {
+      setError('Please provide input values for both.');
+      setTransfers([]);
+    } else if (numberRegex.test(startBlock) && numberRegex.test(endBlock)) {
+        const start = parseInt(startBlock)
+        const end = parseInt(endBlock)
+        
+      if (start < end) {
+        try{
+          const ret = await getData(start, end);
+          const keyValueArray = Object.entries(ret.transfers).map(([key, value]) => ({ [key]: value } as TransferData));
+          //sort key value array
+          setTransfers(keyValueArray);
+          setError('');
+        } catch (err: any) {
+          setTransfers([]);
+          setError("Range is to big.");
+        }
+      } else {
+        setError('Input 1 should be less than Input 2.');
+        setTransfers([]);
+      }
+    } else {
+      setError('Input values should only contain numbers.');
+      setTransfers([]);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="flex min-h-screen flex-col items-center justify-between"  >
+      <div className='place-content-start w-screen h-screen relative z-0"'>
+      <img src="https://www.coindesk.com/resizer/BQ9LHb_3SB7I6mkXBxLvyOD-HH4=/1056x603/filters:quality(80):format(webp)/cloudfront-us-east-1.images.arcpublishing.com/coindesk/3PS6KYIK5NCMRHIMMLWPOG4J2U.png" width="100%" height="100%"/>
+      </div>
+      <div className='absolute z-10'>
+        <div className=' flex flex-col items-center justify-between py-20'>
+          <div className='pb-8'>
+            <img src="https://d12b90t6rq6rcc.cloudfront.net/56a63cd1af5e/assets/orig/logo-2.4c4b3ce7.png" alt="Be A Killer" width="300" height="auto"/>
+          </div>
+          <input className="bg-[#00142d] border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 " type="text" value={startBlock} onChange={handleInputChange1} style={{ color: 'white' }} placeholder="Start Block" required/>
+          <br />
+          <input className="bg-[#00142d] border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 " type="text" value={endBlock} onChange={handleInputChange2} style={{ color: 'white' }} placeholder="End Block" required/>
+          <br />
+          <button className='py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-[#00142d] hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-[#00142d] dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-[#00142f]' onClick={handleButtonClick}>Submit</button>
         </div>
-      </div>
+        {error &&
+        <div className="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          <svg aria-hidden="true" className="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+          <span className="sr-only">Info</span>
+          <div>
+            <span className="font-medium">ERROR!</span> {error}
+          </div>
+        </div>
+        }
+          {transfers.length > 0 && (
+            <div>
+              <div className='overflow-auto lg:max-h-60 relative shadow-md rounded-lg'>
+                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                  <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+                    <tr>
+                      <th className="sticky z-10 top-0 text-sm leading-6 font-semibold text-slate-700 bg-white p-0 dark:bg-slate-900 dark:text-slate-300">
+                        <div className='px-6 py-3 border-b border-slate-200 dark:border-slate-400/20'>Address</div>
+                      </th>
+                      <th className="sticky z-10 top-0 text-sm leading-6 font-semibold text-slate-700 bg-white p-0 dark:bg-slate-900 dark:text-slate-300">
+                        <div className="px-6 py-3 border-b border-slate-200 dark:border-slate-400/20">Value</div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="align-baseline">
+                    {/* <div className='overflow-y-auto h-60'> */}
+                    {transfers.map((transfer, index) => {
+                      const address = Object.keys(transfer)[0];
+                      const value = transfer[address];
+                      return (
+                          <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600' key={index}>
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{address}</td>
+                            <td scope="row" className="px-6 py-4">{value}</td>
+                          </tr>
+                      );
+                      })}
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+                    {/* </div> */}
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
       </div>
     </main>
   )
