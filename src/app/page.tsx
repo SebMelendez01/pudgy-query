@@ -123,7 +123,7 @@ export default function Home() {
                   </svg>
                   <span className="self-center text-lg font-semibold whitespace-nowrap dark:text-white">Pudgy Penguins</span>
               </a>
-              <p className="flex items-center text-sm font-normal text-white dark:text-white">Input a blockrange to learn more about addresses transfering Pudgy Penguin NFTs</p>
+              <p className="flex items-center text-sm font-normal text-white dark:text-white">Input a blockrange to learn more about addresses transfering Pudgy Penguin NFTs. Example: 17503162, 17523162.</p>
           </div>
           <div className="flex items-center flex-shrink-0">
               <button data-dismiss-target="#marketing-banner" type="button" className="absolute top-2.5 right-2.5 md:relative md:top-auto md:right-auto flex-shrink-0 inline-flex justify-center items-center text-white hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 dark:hover:bg-[fbf7eb] dark:hover:text-white">
