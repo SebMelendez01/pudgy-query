@@ -1,43 +1,28 @@
 import { ethers } from "ethers";
-import abi from "../../../assets/abi.json";
+import abi from "../abi.json";
+
 require("dotenv").config();
 // import * as fs from 'fs';
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 function cleanEvents(events) {
-    const seenTransactionHashes = new Set();
-    const tempEvents = [];
 
-    //Clean event Data such that there are no duplicate transactions
-    for (const event of events) {
-        const transactionHash = event.transactionHash;
-
-        if (!seenTransactionHashes.has(transactionHash)) {
-            seenTransactionHashes.add(transactionHash);
-            tempEvents.push(event);
-        }
-    }
-
+    const removeDuplicates = events.filter((events, index, self) => index === self.findIndex((t) => (t.transactionHash === events.transactionHash)))
+    
     //Sum up each entry
-    const cleanedMap = new Map();
-    for (const event of tempEvents) {
+    const obj = {};
+    for (const event of removeDuplicates) {
         const from = event.args[0];
-        const id = event.args[2];
-        if(!cleanedMap.has(from)) {
-            cleanedMap.set(from, 1); 
+        if(!(from in obj)) {
+            obj[from] = 1
         } else {
-            const count = Number(cleanedMap.get(from));
-            cleanedMap.set(from, count + 1);
+            const count = obj[from] + 1;
+            obj[from] = count;
         }
     }
 
-    // Convert Map to plain JavaScript object
-    const obj = {};
-        cleanedMap.forEach((value, key) => {
-        obj[key] = value;
-    });
-
+    //sort the keys
     const sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
     //Sort the object
     const sortedObject = {};
@@ -48,7 +33,7 @@ function cleanEvents(events) {
 
 }
 
-export async function getData(startBlock, endBlock) {//
+export async function getData(startBlock, endBlock) {
     // Perform asynchronous data retrieval or processing here using input1 and input2
     console.log('Fetching data with input1:', startBlock, 'and input2:', endBlock);
 
@@ -61,15 +46,7 @@ export async function getData(startBlock, endBlock) {//
     );    
 
     const filter = contract.filters.Transfer(null, null);
-    // let allEvents = [];
-    
-    // for(let i = startBlock; i < endBlock; i += 5000) {
-    //     const _startBlock = i;
-    //     console.log(_startBlock);
-    //     const _endBlock = Math.min(endBlock, i + 4999);
-    //     const events = await contract.queryFilter(filter, _startBlock, _endBlock);
-    //     allEvents = [...allEvents, ...events]
-    // }
+
     try {
         let events = await contract.queryFilter(filter, startBlock, endBlock);
         // console.log(events);
