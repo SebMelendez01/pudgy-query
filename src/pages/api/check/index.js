@@ -8,13 +8,13 @@ const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 function cleanEvents(events) {
 
     //remove duplicates
-    const removeDuplicates = events.filter((events, index, self) => 
-        index === self.findIndex((t) => 
-            (t.transactionHash === events.transactionHash)))
+    const removeDuplicates = events.filter((event, index, arr) => 
+        index === arr.findIndex((t) => 
+            (t.transactionHash === event.transactionHash)))
     
     //reduce to an obj and combine
     const obj = removeDuplicates.reduce((o, cur) => ({ 
-        ...o, [cur.args[0]]:  o[cur.args[0]] = o[cur.args[0]] ? o[cur.args[0]] + 1 : 1
+        ...o, [cur.args[0]]: o[cur.args[0]] = o[cur.args[0]] ? o[cur.args[0]] + 1 : 1
     }), {})
 
     //Sort the object
@@ -23,7 +23,6 @@ function cleanEvents(events) {
     );
 
     return sortedObject;
-
 }
 
 export async function getData(startBlock, endBlock) {
@@ -56,10 +55,8 @@ export async function getData(startBlock, endBlock) {
         return {
             "success" : false,
             "message": "Failed to retrieve data from blockchain"
-            };
+        };
     }
-
-    
 }
 
 export default async (req, res) => {
