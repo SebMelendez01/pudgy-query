@@ -14,10 +14,6 @@ export default function Home() {
   const [transfers, setTransfers] = useState<TransferData[]>([]);
   const [start, setStart] = useState(true);
 
-  function sortTransferData(transferData: TransferData[]): TransferData[] {
-    return transferData.sort((a, b) => b["number"] - a["number"]);
-  }
-
   const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartBlock(e.target.value);
   };

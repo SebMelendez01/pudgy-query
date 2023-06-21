@@ -2,33 +2,26 @@ import { ethers } from "ethers";
 import abi from "../abi.json";
 
 require("dotenv").config();
-// import * as fs from 'fs';
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 function cleanEvents(events) {
 
-    const removeDuplicates = events.filter((events, index, self) => index === self.findIndex((t) => (t.transactionHash === events.transactionHash)))
+    //remove duplicates
+    const removeDuplicates = events.filter((events, index, self) => 
+        index === self.findIndex((t) => 
+            (t.transactionHash === events.transactionHash)))
     
-    //Sum up each entry
-    const obj = {};
-    for (const event of removeDuplicates) {
-        const from = event.args[0];
-        if(!(from in obj)) {
-            obj[from] = 1
-        } else {
-            const count = obj[from] + 1;
-            obj[from] = count;
-        }
-    }
+    //reduce to an obj and combine
+    const obj = removeDuplicates.reduce((o, cur) => ({ 
+        ...o, [cur.args[0]]:  o[cur.args[0]] = o[cur.args[0]] ? o[cur.args[0]] + 1 : 1
+    }), {})
 
-    //sort the keys
-    const sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
     //Sort the object
-    const sortedObject = {};
-    for (const key of sortedKeys) {
-        sortedObject[key] = obj[key];
-    }
+    const sortedObject = Object.fromEntries(
+        Object.entries(obj).sort(([ , a], [ , b]) => b - a)
+    );
+
     return sortedObject;
 
 }
@@ -49,7 +42,6 @@ export async function getData(startBlock, endBlock) {
 
     try {
         let events = await contract.queryFilter(filter, startBlock, endBlock);
-        // console.log(events);
         const fromAddressCounts = cleanEvents(events);
 
         let obj = {
