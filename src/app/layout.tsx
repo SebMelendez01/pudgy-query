@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'PP Fudder',
-  description: 'Find the Fake Pudgy Penguin Holders',
+  description: 'Find the Pudgy Penguin NFT Transfers',
 }
 
 export default function RootLayout({
