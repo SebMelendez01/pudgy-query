@@ -5,27 +5,32 @@ require("dotenv").config();
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-function cleanEvents(events) {
+function cleanEvents(events: any) {
 
     //remove duplicates
-    const removeDuplicates = events.filter((event, index, arr) => 
-        index === arr.findIndex((t) => 
+    const removeDuplicates = events.filter((event:any, index:number, arr:any) => 
+        index === arr.findIndex((t:any) => 
             (t.transactionHash === event.transactionHash)))
     
     //reduce to an obj and combine
-    const obj = removeDuplicates.reduce((o, cur) => ({ 
+    const obj = removeDuplicates.reduce((o:any, cur:any) => ({ 
         ...o, [cur.args[0]]: o[cur.args[0]] = o[cur.args[0]] ? o[cur.args[0]] + 1 : 1
     }), {})
 
     //Sort the object
     const sortedObject = Object.fromEntries(
-        Object.entries(obj).sort(([ , a], [ , b]) => b - a)
+        Object.entries(obj).sort(([ , a], [ , b]) =>{ 
+            const aNum = a as number;
+            const bNum = b as number;
+            
+            return bNum - aNum; 
+        })
     );
 
     return sortedObject;
 }
 
-export async function getData(startBlock, endBlock) {
+export async function getData(startBlock: number, endBlock: number) {
     // Perform asynchronous data retrieval or processing here using input1 and input2
     console.log('Fetching data with input1:', startBlock, 'and input2:', endBlock);
 
@@ -59,7 +64,7 @@ export async function getData(startBlock, endBlock) {
     }
 }
 
-export default async (req, res) => {
+export default async (req: any, res: any) => {
     const data = await getData(Number(req.query.startBlock), Number(req.query.endBlock))
     if(data.success) {
         res.status(200).json(data);
